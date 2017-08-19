@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 module MultiAggregator
-  VERSION = '0.1.0'
+  module Query
+  end
 end
