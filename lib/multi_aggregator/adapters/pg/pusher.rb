@@ -21,8 +21,8 @@ module MultiAggregator
           @logger = logger
         end
 
-        def call(db_name, table, rows)
-          connection = ::PG.connect(params.merge(dbname: db_name))
+        def call(table, rows)
+          connection = ::PG.connect(params)
           query = insert_data_query(table, rows)
           logger.info("Exec (first #{LOG_EXEC_QUERY_LIMIT}): #{query[0...LOG_EXEC_QUERY_LIMIT]}")
           connection.exec(query)
@@ -44,7 +44,6 @@ module MultiAggregator
           query + "(#{values_string(rows.last)});"
         end
 
-        # TODO: escape values
         def values_string(row)
           values = escaped_values(row.values)
           "'#{values.join("','")}'"

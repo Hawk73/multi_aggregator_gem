@@ -39,12 +39,8 @@ RSpec.describe MultiAggregator::Processor do
     call
   end
 
-  it 'validates storage and providers' do
-    expect(subject.adapter_validator).to receive(:call).with(storage)
-    providers.each do |_key, provider|
-      expect(subject.adapter_validator).to receive(:call).with(provider)
-    end
-
+  it 'validates storage' do
+    expect(subject.storage_validator).to receive(:call).with(storage)
     call
   end
 
@@ -56,18 +52,5 @@ RSpec.describe MultiAggregator::Processor do
   it 'calls data_transfer' do
     expect(subject.data_transfer).to receive(:call).with(query_spec, storage, providers)
     call
-  end
-
-  context 'without required adapter' do
-    let(:providers) do
-      {
-        'db_a' => create_pg_adapter(host: 'host_for_db_a'),
-        'unused_db' => create_pg_adapter
-      }
-    end
-
-    it 'raises NoAdapterError' do
-      expect { call }.to raise_error(described_class::NoAdapterError)
-    end
   end
 end

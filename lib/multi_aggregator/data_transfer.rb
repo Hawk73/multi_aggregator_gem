@@ -21,15 +21,25 @@ module MultiAggregator
     private
 
     def transfer_tables(storage, provider, db_name, tables_spec)
-      tables_spec.each do |table, fields|
-        transfer_table(storage, provider, db_name, table, fields)
+      tables_spec.each do |table, columns_spec|
+        transfer_table(storage, provider, db_name, table, columns_spec)
       end
     end
 
     # TODO: transfer by batches
-    def transfer_table(storage, provider, db_name, table, fields)
-      rows = provider.fetch(db_name, table, fields)
-      storage.push(db_name, table, rows)
+    def transfer_table(storage, provider, db_name, table, columns_spec)
+      columns = columns_spec.keys
+      rows = provider.fetch(db_name, table, columns)
+
+      target_table = target_table_for(db_name, table)
+      storage.create_structure(target_table, columns_spec)
+
+      storage.push(target_table, rows)
+    end
+
+    def target_table_for(src_db_name, src_table)
+      # TODO: add uniq prefix?
+      "#{src_db_name}__#{src_table}"
     end
   end
 end

@@ -16,6 +16,8 @@ require 'multi_aggregator/adapters/pg/connection_checker'
 require 'multi_aggregator/adapters/pg/fetcher'
 require 'multi_aggregator/adapters/pg/pusher'
 require 'multi_aggregator/adapters/pg/query_executor'
+require 'multi_aggregator/adapters/pg/structure_creator'
+require 'multi_aggregator/adapters/pg/structure_fetcher'
 
 require 'multi_aggregator/query/spec_creator'
 require 'multi_aggregator/query/query'

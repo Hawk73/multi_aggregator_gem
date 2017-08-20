@@ -1,34 +1,31 @@
 # frozen_string_literal: true
 
-RSpec.describe MultiAggregator::Adapters::Pg::Fetcher do
+RSpec.describe MultiAggregator::Adapters::Pg::StructureCreator do
   def call
-    subject.call(table, columns)
+    subject.call(table, columns_spec)
   end
 
-  let(:params) do
+  let(:table) { 'db_a__table_a' }
+  let(:columns_spec) do
     {
-      host: 'host',
-      user: 'postgres'
+      'field_a' => 'character varying',
+      'id' => 'integer'
     }
   end
-  let(:table) { 'table_a' }
-  let(:columns) do
-    %w[
-      field_a
-      id
-    ]
-  end
-
-  subject { described_class.new(params) }
 
   context 'connection is good' do
     let(:fake_connection) { create_fake_connection }
-    let(:select_query) { 'SELECT field_a,id FROM table_a;' }
+    let(:create_table_query) do
+      'CREATE TABLE db_a__table_a (' \
+      'field_a character varying,' \
+      'id integer' \
+      ');'
+    end
 
     before { stub_pg_connection(fake_connection) }
 
-    it 'execs "SELECT" query' do
-      expect(fake_connection).to receive(:exec).with(select_query)
+    it 'execs "CREATE TABLE" query' do
+      expect(fake_connection).to receive(:exec).with(create_table_query)
       call
     end
 

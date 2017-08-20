@@ -9,16 +9,20 @@ RSpec.describe MultiAggregator::DataTransfer do
     allow(provider).to receive(:fetch).and_return(result)
   end
 
-  def expect_fetch(provider, db_name, table, *fields)
-    expect(provider).to receive(:fetch).with(db_name, table, fields).and_return([])
+  def expect_fetch(provider, db_name, table, *columns)
+    expect(provider).to receive(:fetch).with(db_name, table, columns).and_return([])
+  end
+
+  def allow_create_structure
+    allow(storage).to receive(:create_structure)
   end
 
   def allow_push
     allow(storage).to receive(:push)
   end
 
-  def expect_push(db_name, table, rows)
-    expect(storage).to receive(:push).with(db_name, table, rows)
+  def expect_push(table, rows)
+    expect(storage).to receive(:push).with(table, rows)
   end
 
   let(:storage) { create_pg_adapter }
@@ -46,6 +50,7 @@ RSpec.describe MultiAggregator::DataTransfer do
   before do
     allow_fetch(providers['db_a'], fetched_rows_a)
     allow_fetch(providers['db_b'], fetched_rows_b)
+    allow_create_structure
     allow_push
   end
 
@@ -61,8 +66,8 @@ RSpec.describe MultiAggregator::DataTransfer do
   end
 
   it 'pushes data' do
-    expect_push('db_a', 'table_a', fetched_rows_a)
-    expect_push('db_b', 'table_b', fetched_rows_b)
+    expect_push('db_a__table_a', fetched_rows_a)
+    expect_push('db_b__table_b', fetched_rows_b)
 
     call
   end

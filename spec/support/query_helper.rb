@@ -24,16 +24,16 @@ module QueryHelper
   def generate_query_spec
     {
       'db_a' => {
-        'table_a' => %w[
-          field_a
-          id
-        ]
+        'table_a' => {
+          'field_a' => 'character varying',
+          'id' => 'integer'
+        }
       },
       'db_b' => {
-        'table_b' => %w[
-          id
-          field_b
-        ]
+        'table_b' => {
+          'id' => 'integer',
+          'field_b' => 'character varying'
+        }
       }
     }
   end

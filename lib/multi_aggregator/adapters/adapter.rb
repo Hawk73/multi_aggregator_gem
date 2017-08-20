@@ -2,6 +2,7 @@
 
 module MultiAggregator
   module Adapters
+    # TODO: add db_name in params because adapter can contain more than one DB
     class Adapter
       include ::MultiAggregator::ClassHelper
 
@@ -20,6 +21,8 @@ module MultiAggregator
         fetcher
         pusher
         query_executor
+        structure_creator
+        structure_fetcher
       ].freeze
 
       TYPES.each do |type|
@@ -54,12 +57,20 @@ module MultiAggregator
         "#{type} adapter with params:#{params.inspect}"
       end
 
-      def fetch(db_name, table, fields)
-        fetcher.call(db_name, table, fields)
+      def fetch_structure(table)
+        structure_fetcher.call(table)
       end
 
-      def push(db_name, table, rows)
-        pusher.call(db_name, table, rows)
+      def fetch(table, columns)
+        fetcher.call(table, columns)
+      end
+
+      def create_structure(table, columns_spec)
+        structure_creator.call(table, columns_spec)
+      end
+
+      def push(table, rows)
+        pusher.call(table, rows)
       end
 
       def exec(raw_query, query_spec)

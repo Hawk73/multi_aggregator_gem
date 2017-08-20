@@ -2,11 +2,7 @@
 
 RSpec.describe MultiAggregator::Adapters::Pg::Pusher do
   def call
-    subject.call(db_name, table, rows)
-  end
-
-  def expect_exec_query(query, fake_connection, result = true)
-    expect(fake_connection).to receive(:exec).with(query).and_return(result)
+    subject.call(table, rows)
   end
 
   let(:params) do
@@ -15,8 +11,7 @@ RSpec.describe MultiAggregator::Adapters::Pg::Pusher do
       user: 'postgres'
     }
   end
-  let(:db_name) { 'db_a' }
-  let(:table) { 'table_a' }
+  let(:table) { 'db_a__table_a' }
   let(:rows) do
     [
       {
@@ -35,7 +30,7 @@ RSpec.describe MultiAggregator::Adapters::Pg::Pusher do
   context 'connection is good' do
     let(:fake_connection) { create_fake_connection }
     let(:insert_query) do
-      'INSERT INTO table_a(field_a,id) ' \
+      'INSERT INTO db_a__table_a(field_a,id) ' \
       'VALUES ' \
       "('one','1')," \
       "('two','2');"
@@ -63,7 +58,7 @@ RSpec.describe MultiAggregator::Adapters::Pg::Pusher do
         ]
       end
       let(:insert_query) do
-        'INSERT INTO table_a(field_a,id) ' \
+        'INSERT INTO db_a__table_a(field_a,id) ' \
         'VALUES ' \
         "('it\'s with \'','1');"
       end
