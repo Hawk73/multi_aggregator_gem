@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 module MultiAggregator
-  # TODO: rename
-  class Performer
+  class Processor
     Error = Class.new(::MultiAggregator::Error)
 
     NoAdapterError = Class.new(Error)
@@ -30,7 +29,7 @@ module MultiAggregator
     end
 
     def call(query, storage, providers = {})
-      log_debug_info(query, storage, providers)
+      log_src_params(query, storage, providers)
 
       validate!(query, storage)
 
@@ -45,7 +44,7 @@ module MultiAggregator
 
     private
 
-    def log_debug_info(query, storage, providers)
+    def log_src_params(query, storage, providers)
       logger.debug "Query: '#{query}'"
       logger.debug "Storage: '#{storage}'"
       providers.each do |key, provider|

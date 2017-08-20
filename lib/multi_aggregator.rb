@@ -3,7 +3,7 @@
 require 'multi_aggregator/data_transfer'
 require 'multi_aggregator/error'
 require 'multi_aggregator/logger'
-require 'multi_aggregator/performer'
+require 'multi_aggregator/processor'
 require 'multi_aggregator/version'
 
 require 'multi_aggregator/helpers/class_helper'

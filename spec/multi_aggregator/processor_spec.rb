@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe MultiAggregator::Performer do
+RSpec.describe MultiAggregator::Processor do
   def call
     subject.call(query, storage, providers)
   end
