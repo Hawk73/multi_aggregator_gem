@@ -17,15 +17,11 @@ module PgHelper
     allow(::PG).to receive(:connect).and_raise(::PG::ConnectionBad)
   end
 
-  def stub_pg_fetch(result = [])
-    allow_any_instance_of(MultiAggregator::Adapters::Pg::Fetcher).to receive(:call).and_return(result)
-  end
-
-  def stub_pg_push(result = true)
-    allow_any_instance_of(MultiAggregator::Adapters::Pg::Pusher).to receive(:call).and_return(result)
-  end
-
   def stub_pg_query_exec(result = [])
     allow_any_instance_of(MultiAggregator::Adapters::Pg::QueryExecutor).to receive(:call).and_return(result)
+  end
+
+  def stub_pg_check_connection
+    allow_any_instance_of(MultiAggregator::Adapters::Pg::ConnectionChecker).to receive(:call)
   end
 end

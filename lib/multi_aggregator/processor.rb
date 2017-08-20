@@ -31,13 +31,16 @@ module MultiAggregator
     def call(query, storage, providers = {})
       log_src_params(query, storage, providers)
 
+      # TODO: move to MultiAggregator::Validator
       validate!(query, storage)
 
       query_spec = create_query_spec(query)
       providers = filter_providers(providers, query_spec)
       validate_providers!(providers, query_spec)
 
-      rows = storage.query_executor.call(query, query_spec)
+      transfer_data(query_spec, storage, providers)
+
+      rows = storage.exec(query, query_spec)
       rows.each { |row| logger.debug(row) }
       rows
     end
@@ -93,6 +96,10 @@ module MultiAggregator
 
     def retrieve_missing_provider_ids(provider_ids, providers)
       provider_ids - providers.keys
+    end
+
+    def transfer_data(query_spec, storage, providers)
+      data_transfer.call(query_spec, storage, providers)
     end
   end
 end

@@ -15,9 +15,22 @@ module MultiAggregator
         REDSHIFT_TYPE
       ].freeze
 
+      COMPONENTS = %i[
+        connection_checker
+        fetcher
+        pusher
+        query_executor
+      ].freeze
+
       TYPES.each do |type|
         define_singleton_method("create_#{type}_adapter") do |params|
           new(type, params)
+        end
+      end
+
+      COMPONENTS.each do |component|
+        define_method(component) do
+          component_class(component).new(params)
         end
       end
 
@@ -37,26 +50,26 @@ module MultiAggregator
         params[key]
       end
 
-      def connection_checker
-        connection_checker_class.new(params)
-      end
-
-      def query_executor
-        query_executor_class.new(params)
-      end
-
       def to_s
         "#{type} adapter with params:#{params.inspect}"
       end
 
-      private
-
-      def connection_checker_class
-        class_from_string("MultiAggregator::Adapters::#{type.capitalize}::ConnectionChecker")
+      def fetch(db_name, table, fields)
+        fetcher.call(db_name, table, fields)
       end
 
-      def query_executor_class
-        class_from_string("MultiAggregator::Adapters::#{type.capitalize}::QueryExecutor")
+      def push(db_name, table, rows)
+        pusher.call(db_name, table, rows)
+      end
+
+      def exec(raw_query, query_spec)
+        query_executor.call(raw_query, query_spec)
+      end
+
+      private
+
+      def component_class(component)
+        class_from_string("MultiAggregator::Adapters::#{type.capitalize}::#{camelize(component)}")
       end
     end
   end

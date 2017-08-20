@@ -12,41 +12,24 @@ module MultiAggregator
       @logger = logger
     end
 
-    def call(spec, storage, providers)
-      spec.each do |table, fields|
-        transfer(adapter_connection, table, fields)
+    def call(query_spec, storage, providers = {})
+      query_spec.each do |provider_id, tables_spec|
+        transfer_tables(storage, providers[provider_id], provider_id, tables_spec)
       end
     end
 
     private
 
-    # TODO: transfer by batches
-    def transfer(adapter_connection, table, fields)
-      data = adapter.pull(adapter_connection, table, fields)
-      importer.push(data)
+    def transfer_tables(storage, provider, db_name, tables_spec)
+      tables_spec.each do |table, fields|
+        transfer_table(storage, provider, db_name, table, fields)
+      end
     end
-  #
-  #   def create_table(connection, table)
-  #
-  #   end
-  #
-  #   def pull(connection, table, fields)
-  #     sql_query = select_data_query(table, fields)
-  #     logger.info("Exec: #{sql_query}")
-  #     connection.exec(sql_query)
-  #   end
-  #
-  #   def push(connection, table, data)
-  #     rows.each do |row|
-  #       logger.info(row)
-  #     end
-  #   end
-  #
-  #   # TODO: add placeholders
-  #   def select_data_query(table, fields)
-  #     fields_string = fields.join(',')
-  #     "SELECT #{fields_string} FROM #{table}"
-  #   end
-  # end
+
+    # TODO: transfer by batches
+    def transfer_table(storage, provider, db_name, table, fields)
+      rows = provider.fetch(db_name, table, fields)
+      storage.push(db_name, table, rows)
+    end
   end
 end

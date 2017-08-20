@@ -7,5 +7,9 @@ module MultiAggregator
         mod.const_get(class_name)
       end
     end
+
+    def camelize(str)
+      str.to_s.split('_').collect(&:capitalize).join
+    end
   end
 end
