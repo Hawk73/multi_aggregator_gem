@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.name = 'multi_aggregator'
   spec.version = MultiAggregator::VERSION
   spec.platform = Gem::Platform::RUBY
-  spec.required_ruby_version = '>= 2.0.0'
+  spec.required_ruby_version = '>= 2.3.0'
   spec.authors = ['hawk73']
   spec.email = ['hawk.bms@gmail.com']
 
@@ -33,8 +33,10 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'pg', '~> 0.21'
+
   spec.add_development_dependency 'bundler', '~> 1.15'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'rubocop', '~> 0.49'
 end

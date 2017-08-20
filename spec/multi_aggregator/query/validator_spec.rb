@@ -6,7 +6,7 @@ RSpec.describe MultiAggregator::Query::Validator do
   end
 
   context 'query is valid' do
-    let(:query) { QueryGenerator.call }
+    let(:query) { generate_query }
 
     it 'returns true' do
       expect(call).to be_truthy

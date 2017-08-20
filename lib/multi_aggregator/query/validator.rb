@@ -3,9 +3,9 @@
 module MultiAggregator
   module Query
     class Validator
-      BaseError = Class.new(StandardError)
+      Error = Class.new(::MultiAggregator::Error)
 
-      EmptyQueryError = Class.new(BaseError)
+      EmptyQueryError = Class.new(Error)
 
       # TODO: add additional validations
       def call(query)
