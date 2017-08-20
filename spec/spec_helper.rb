@@ -23,4 +23,18 @@ RSpec.configure do |config|
   config.include AdapterHelper
   config.include PgHelper
   config.include QueryHelper
+
+  # config.use_transactional_fixtures = false
+  # def without_transactional_fixtures(&block)
+  #
+  #   before(:all) do
+  #     DatabaseCleaner.strategy = :truncation
+  #   end
+  #
+  #   yield
+  #
+  #   after(:all) do
+  #     DatabaseCleaner.strategy = :transaction
+  #   end
+  # end
 end

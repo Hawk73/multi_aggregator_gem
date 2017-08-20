@@ -2,25 +2,16 @@
 
 RSpec.describe MultiAggregator::Adapters::Pg::QueryExecutor do
   def call
-    subject.call(raw_query, query_spec)
-  end
-
-  let(:params) do
-    {
-      host: 'host',
-      user: 'pg'
-    }
+    subject.call(raw_query, query_spec, uid)
   end
 
   let(:raw_query) { generate_query }
   let(:query_spec) { generate_query_spec }
-
-  let(:pg_query) { generate_pg_query }
-
-  subject { described_class.new(params) }
+  let(:uid) { 't123' }
 
   context 'connection is good' do
     let(:fake_connection) { create_fake_connection }
+    let(:pg_query) { generate_pg_query('t123') }
 
     before { stub_pg_connection(fake_connection) }
 

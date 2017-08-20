@@ -12,7 +12,7 @@ module MultiAggregator
       private
 
       def check_connections!(adapter)
-        adapter.connection_checker.call
+        adapter.check_connections
       end
     end
   end

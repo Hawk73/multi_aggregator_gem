@@ -38,7 +38,8 @@ module MultiAggregator
       end
 
       attr_accessor(
-        :params
+        :params,
+        :uid
       )
       attr_reader(
         :type
@@ -55,6 +56,10 @@ module MultiAggregator
 
       def to_s
         "#{type} adapter with params:#{params.inspect}"
+      end
+
+      def check_connections
+        connection_checker.call
       end
 
       def fetch_structure(table)
@@ -74,7 +79,7 @@ module MultiAggregator
       end
 
       def exec(raw_query, query_spec)
-        query_executor.call(raw_query, query_spec)
+        query_executor.call(raw_query, query_spec, uid)
       end
 
       private

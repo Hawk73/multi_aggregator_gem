@@ -29,17 +29,23 @@ module MultiAggregator
     # TODO: transfer by batches
     def transfer_table(storage, provider, db_name, table, columns_spec)
       columns = columns_spec.keys
-      rows = provider.fetch(db_name, table, columns)
+      rows = provider.fetch(table, columns)
 
-      target_table = target_table_for(db_name, table)
+      uid = generate_uid
+      # TODO: create better solution for uniq tables names
+      storage.uid = uid
+      target_table = target_table_for(db_name, table, uid)
       storage.create_structure(target_table, columns_spec)
 
       storage.push(target_table, rows)
     end
 
-    def target_table_for(src_db_name, src_table)
-      # TODO: add uniq prefix?
-      "#{src_db_name}__#{src_table}"
+    def generate_uid
+      "t#{Time.now.to_i}"
+    end
+
+    def target_table_for(src_db_name, src_table, uid)
+      "#{uid}__#{src_db_name}__#{src_table}"
     end
   end
 end

@@ -23,7 +23,7 @@ module MultiAggregator
           connection = ::PG.connect(params)
           query = select_data_query(table, columns)
           logger.info("Exec: #{query}")
-          connection.exec(query)
+          connection.exec(query).to_a
         rescue ::PG::ConnectionBad => error
           logger.log_error(error)
           raise(MultiAggregator::Adapters::NoConnectionError, error.message)

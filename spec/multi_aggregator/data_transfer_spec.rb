@@ -9,8 +9,8 @@ RSpec.describe MultiAggregator::DataTransfer do
     allow(provider).to receive(:fetch).and_return(result)
   end
 
-  def expect_fetch(provider, db_name, table, *columns)
-    expect(provider).to receive(:fetch).with(db_name, table, columns).and_return([])
+  def expect_fetch(provider, table, *columns)
+    expect(provider).to receive(:fetch).with(table, columns).and_return([])
   end
 
   def allow_create_structure
@@ -59,15 +59,18 @@ RSpec.describe MultiAggregator::DataTransfer do
   end
 
   it 'fetches data' do
-    expect_fetch(providers['db_a'], 'db_a', 'table_a', 'field_a', 'id')
-    expect_fetch(providers['db_b'], 'db_b', 'table_b', 'id', 'field_b')
+    expect_fetch(providers['db_a'], 'table_a', 'field_a', 'id')
+    expect_fetch(providers['db_b'], 'table_b', 'id', 'field_b')
 
     call
   end
 
   it 'pushes data' do
-    expect_push('db_a__table_a', fetched_rows_a)
-    expect_push('db_b__table_b', fetched_rows_b)
+    # TODO: make me better
+    allow(Time).to receive(:now).and_return(123)
+
+    expect_push('t123__db_a__table_a', fetched_rows_a)
+    expect_push('t123__db_b__table_b', fetched_rows_b)
 
     call
   end

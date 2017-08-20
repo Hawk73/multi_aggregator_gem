@@ -45,7 +45,7 @@ RSpec.describe MultiAggregator::Processor do
   end
 
   it 'calls spec_creator' do
-    expect(subject.spec_creator).to receive(:call).with(query).and_return(query_spec)
+    expect(subject.spec_creator).to receive(:call).with(query, providers).and_return(query_spec)
     call
   end
 

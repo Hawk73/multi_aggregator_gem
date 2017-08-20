@@ -12,16 +12,16 @@ module MultiAggregator
         )
 
         def initialize(
-          params,
+          params = {},
           logger = MultiAggregator::Logger.new
         )
           @params = params
           @logger = logger
         end
 
-        def call(raw_query, query_spec)
+        def call(raw_query, query_spec, uid)
           connection = ::PG.connect(params)
-          query = adapted_query(raw_query, query_spec)
+          query = adapted_query(raw_query, query_spec, uid)
           connection.exec(query).to_a
         rescue ::PG::ConnectionBad => error
           logger.log_error(error)
@@ -32,11 +32,11 @@ module MultiAggregator
 
         private
 
-        def adapted_query(raw_query, query_spec)
+        def adapted_query(raw_query, query_spec, uid)
           query = raw_query
           query_spec.each do |provider, tables|
             tables.each_key do |table|
-              query = query.gsub("#{provider}.#{table}", "#{provider}_#{table}")
+              query = query.gsub("#{provider}.#{table}", "#{uid}__#{provider}__#{table}")
             end
           end
           query

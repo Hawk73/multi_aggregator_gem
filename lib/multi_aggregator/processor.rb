@@ -32,7 +32,7 @@ module MultiAggregator
       # TODO: move to MultiAggregator::Validator
       validate!(query, storage)
 
-      query_spec = create_query_spec(query)
+      query_spec = create_query_spec(query, providers)
 
       transfer_data(query_spec, storage, providers)
 
@@ -64,8 +64,8 @@ module MultiAggregator
       storage_validator.call(storage)
     end
 
-    def create_query_spec(query)
-      spec_creator.call(query)
+    def create_query_spec(query, providers)
+      spec_creator.call(query, providers)
     end
 
     def transfer_data(query_spec, storage, providers)

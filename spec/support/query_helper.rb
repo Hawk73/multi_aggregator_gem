@@ -11,14 +11,14 @@ module QueryHelper
     "WHERE db_b.table_b.field_b > #{number};"
   end
 
-  def generate_pg_query(number = nil)
+  def generate_pg_query(uid, number = nil)
     @number ||= 0
     number = @number if number.nil?
 
-    'SELECT db_a_table_a.field_a ' \
-    'FROM db_a_table_a ' \
-    'INNER JOIN db_b_table_b ON (db_a_table_a.id = db_b_table_b.id) '\
-    "WHERE db_b_table_b.field_b > #{number};"
+    "SELECT #{uid}__db_a__table_a.field_a " \
+    "FROM #{uid}__db_a__table_a " \
+    "INNER JOIN #{uid}__db_b__table_b ON (#{uid}__db_a__table_a.id = #{uid}__db_b__table_b.id) "\
+    "WHERE #{uid}__db_b__table_b.field_b > #{number};"
   end
 
   def generate_query_spec
