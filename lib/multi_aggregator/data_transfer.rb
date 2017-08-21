@@ -21,6 +21,10 @@ module MultiAggregator
     private
 
     def transfer_tables(storage, provider, db_name, tables_spec)
+      # TODO: move to processor
+      uid = generate_uid
+      storage.uid = uid
+
       tables_spec.each do |table, columns_spec|
         transfer_table(storage, provider, db_name, table, columns_spec)
       end
@@ -31,10 +35,7 @@ module MultiAggregator
       columns = columns_spec.keys
       rows = provider.fetch(table, columns)
 
-      uid = generate_uid
-      # TODO: create better solution for uniq tables names
-      storage.uid = uid
-      target_table = target_table_for(db_name, table, uid)
+      target_table = target_table_for(db_name, table, storage.uid)
       storage.create_structure(target_table, columns_spec)
 
       storage.push(target_table, rows)
