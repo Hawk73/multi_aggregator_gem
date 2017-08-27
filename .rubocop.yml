@@ -1,0 +1,33 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.3
+
+Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  ExcludedMethods:
+    - configure
+    - context
+    - create_table
+    - define
+    - describe
+    - draw
+    - factory
+    - guard
+    - memoize
+    - namespace
+    - register
+    - resources
+    - shared_examples
+    - shared_examples_for
+    - state_machine
+    - task
+    - xcontext
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 15

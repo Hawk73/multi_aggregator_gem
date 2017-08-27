@@ -1,8 +1,6 @@
 # MultiAggregator
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/multi_aggregator`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Prototype for prestodb.
 
 ## Installation
 
@@ -22,7 +20,55 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ psql
+
+```sql
+CREATE DATABASE storage;
+
+CREATE DATABASE db_a;
+CREATE TABLE users (id integer, name character varying);
+INSERT INTO users(id,name) VALUES ('1','Tom'),('2','Jerry');
+
+CREATE DATABASE db_b;
+CREATE TABLE types (id integer, type character varying);
+INSERT INTO types(id,type) VALUES ('1','cat'),('2','mouse');
+```
+    $ bundle exec irb
+
+Run code
+```ruby
+require 'multi_aggregator'
+
+params_a = { dbname: 'db_a' }
+provider_a = MultiAggregator::Adapters::Adapter.create_pg_adapter(params_a)
+provider_a.check_connections
+
+params_b = { dbname: 'db_b' }
+provider_b = MultiAggregator::Adapters::Adapter.create_pg_adapter(params_b)
+provider_b.check_connections
+
+providers = {
+'db_a' => provider_a,
+'db_b' => provider_b
+}
+
+storage_params = { dbname: 'storage' }
+storage = MultiAggregator::Adapters::Adapter.create_pg_adapter(storage_params)
+storage.check_connections
+
+query = <<-SQL
+SELECT db_a.users.id, db_a.users.name, db_b.types.type
+FROM db_a.users
+LEFT JOIN db_b.types ON (db_b.types.id = db_a.users.id);
+SQL
+
+MultiAggregator::Processor.new.call(query, storage, providers)
+```
+Expected result
+```
+{"id"=>"1", "name"=>"Tom", "type"=>"cat"}
+{"id"=>"2", "name"=>"Jerry", "type"=>"mouse"}
+```
 
 ## Development
 
