@@ -2,8 +2,18 @@
 
 module MultiAggregator
   class Logger
+    attr_reader(
+      :config
+    )
+
+    def initialize(
+      config = MultiAggregator::Config
+    )
+      @config = config
+    end
+
     def debug(message)
-      # TODO: add debug switcher
+      return unless config.debug?
       log("[DEBUG] #{message}")
     end
 
