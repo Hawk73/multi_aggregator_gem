@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'multi_aggregator/config'
 require 'multi_aggregator/data_transfer'
 require 'multi_aggregator/error'
 require 'multi_aggregator/logger'
@@ -25,10 +26,4 @@ require 'multi_aggregator/query/validator'
 
 module MultiAggregator
   # TODO: add ability to set global logger and remove logger from dependency
-  class Config
-    class << self
-      attr_accessor :enable_threads
-      attr_accessor :copy_batch_size
-    end
-  end
 end

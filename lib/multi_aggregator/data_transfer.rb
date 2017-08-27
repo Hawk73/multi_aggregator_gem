@@ -55,7 +55,7 @@ module MultiAggregator
       columns = columns_spec.keys
 
       offset = 0
-      while (rows = provider.fetch(table, columns, limit: copy_batch_size, offset: offset)).any? do
+      while (rows = provider.fetch(table, columns, limit: copy_batch_size, offset: offset)).any?
         storage.push(target_table, rows)
         break if copy_batch_size.zero?
         offset += copy_batch_size
