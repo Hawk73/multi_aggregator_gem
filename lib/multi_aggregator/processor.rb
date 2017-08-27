@@ -34,6 +34,8 @@ module MultiAggregator
 
       query_spec = create_query_spec(query, providers)
 
+      storage.uid = generate_uid
+
       transfer_data(query_spec, storage, providers)
 
       rows = storage.exec(query, query_spec)
@@ -66,6 +68,10 @@ module MultiAggregator
 
     def create_query_spec(query, providers)
       spec_creator.call(query, providers)
+    end
+
+    def generate_uid
+      "t#{Time.now.to_i}"
     end
 
     def transfer_data(query_spec, storage, providers)
