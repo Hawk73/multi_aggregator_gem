@@ -48,6 +48,7 @@ RSpec.describe MultiAggregator::DataTransfer do
   end
 
   before do
+    storage.uid = 't123'
     allow_fetch(providers['db_a'], fetched_rows_a)
     allow_fetch(providers['db_b'], fetched_rows_b)
     allow_create_structure
@@ -66,9 +67,6 @@ RSpec.describe MultiAggregator::DataTransfer do
   end
 
   it 'pushes data' do
-    # TODO: make me better
-    allow(Time).to receive(:now).and_return(123)
-
     expect_push('t123__db_a__table_a', fetched_rows_a)
     expect_push('t123__db_b__table_b', fetched_rows_b)
 
