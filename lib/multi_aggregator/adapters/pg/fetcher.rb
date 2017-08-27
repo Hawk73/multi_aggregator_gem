@@ -12,16 +12,16 @@ module MultiAggregator
         )
 
         def initialize(
-          params,
+          params = {},
           logger = MultiAggregator::Logger.new
         )
           @params = params
           @logger = logger
         end
 
-        def call(table, columns)
+        def call(table, columns, query_params = {})
           connection = ::PG.connect(params)
-          query = select_data_query(table, columns)
+          query = select_data_query(table, columns, query_params)
           logger.info("Exec: #{query}")
           connection.exec(query).to_a
         rescue ::PG::ConnectionBad => error
@@ -34,9 +34,12 @@ module MultiAggregator
         private
 
         # TODO: add placeholders
-        def select_data_query(table, columns)
+        def select_data_query(table, columns, query_params = {})
           columns_string = columns.join(',')
-          "SELECT #{columns_string} FROM #{table};"
+          query = "SELECT #{columns_string} FROM #{table}"
+          query += " LIMIT #{query_params[:limit]}" if query_params[:limit]&.positive?
+          query += " OFFSET #{query_params[:offset]}" if query_params[:offset]&.positive?
+          query + ';'
         end
       end
     end

@@ -48,19 +48,26 @@ module MultiAggregator
       end
     end
 
-    # TODO: transfer by batches
     def transfer_table(storage, provider, db_name, table, columns_spec)
-      columns = columns_spec.keys
-      rows = provider.fetch(table, columns)
-
       target_table = target_table_for(db_name, table, storage.uid)
       storage.create_structure(target_table, columns_spec)
 
-      storage.push(target_table, rows)
+      columns = columns_spec.keys
+
+      offset = 0
+      while (rows = provider.fetch(table, columns, limit: copy_batch_size, offset: offset)).any? do
+        storage.push(target_table, rows)
+        break if copy_batch_size.zero?
+        offset += copy_batch_size
+      end
     end
 
     def target_table_for(src_db_name, src_table, uid)
       "#{uid}__#{src_db_name}__#{src_table}"
+    end
+
+    def copy_batch_size
+      config.copy_batch_size.to_i
     end
   end
 end

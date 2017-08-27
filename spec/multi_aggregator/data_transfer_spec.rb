@@ -10,7 +10,7 @@ RSpec.describe MultiAggregator::DataTransfer do
   end
 
   def expect_fetch(provider, table, *columns)
-    expect(provider).to receive(:fetch).with(table, columns).and_return([])
+    expect(provider).to receive(:fetch).with(table, columns, limit: 0, offset: 0).and_return([])
   end
 
   def allow_create_structure

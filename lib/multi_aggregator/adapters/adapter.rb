@@ -66,8 +66,8 @@ module MultiAggregator
         structure_fetcher.call(table)
       end
 
-      def fetch(table, columns)
-        fetcher.call(table, columns)
+      def fetch(table, columns, query_params = {})
+        fetcher.call(table, columns, query_params)
       end
 
       def create_structure(table, columns_spec)

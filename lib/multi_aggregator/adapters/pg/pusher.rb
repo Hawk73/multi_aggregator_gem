@@ -22,6 +22,7 @@ module MultiAggregator
         end
 
         def call(table, rows)
+          return if rows.empty?
           connection = ::PG.connect(params)
           query = insert_data_query(table, rows)
           logger.info("Exec (first #{LOG_EXEC_QUERY_LIMIT}): #{query[0...LOG_EXEC_QUERY_LIMIT]}")
