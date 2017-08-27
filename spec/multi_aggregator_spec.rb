@@ -45,6 +45,13 @@ RSpec.describe MultiAggregator do
     before { MultiAggregator::Config.enable_threads = false }
 
     it_behaves_like 'successful execution of the example'
+
+    context 'by batches' do
+      before { MultiAggregator::Config.copy_batch_size = 1 }
+      after { MultiAggregator::Config.copy_batch_size = 0 }
+
+      it_behaves_like 'successful execution of the example'
+    end
   end
 
   context 'async execution' do
