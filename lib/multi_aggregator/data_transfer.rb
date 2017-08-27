@@ -1,24 +1,46 @@
 # frozen_string_literal: true
 
 module MultiAggregator
+  # TODO: rename to "copy"
   class DataTransfer
     attr_reader(
+      :config,
       :logger
     )
 
     def initialize(
+      config = MultiAggregator::Config,
       logger = MultiAggregator::Logger.new
     )
+      @config = config
       @logger = logger
     end
 
     def call(query_spec, storage, providers = {})
-      query_spec.each do |provider_id, tables_spec|
-        transfer_tables(storage, providers[provider_id], provider_id, tables_spec)
+      if config.enable_threads
+        call_async(query_spec, storage, providers)
+      else
+        call_sync(query_spec, storage, providers)
       end
     end
 
     private
+
+    def call_async(query_spec, storage, providers)
+      threads = []
+      query_spec.each do |provider_id, tables_spec|
+        threads << Thread.new(storage, providers[provider_id], provider_id, tables_spec) do |*args|
+          transfer_tables(*args)
+        end
+      end
+      threads.each(&:join)
+    end
+
+    def call_sync(query_spec, storage, providers)
+      query_spec.each do |provider_id, tables_spec|
+        transfer_tables(storage, providers[provider_id], provider_id, tables_spec)
+      end
+    end
 
     def transfer_tables(storage, provider, db_name, tables_spec)
       tables_spec.each do |table, columns_spec|

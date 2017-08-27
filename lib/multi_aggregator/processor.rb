@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'securerandom'
+
 module MultiAggregator
   class Processor
     Error = Class.new(::MultiAggregator::Error)
@@ -71,7 +73,7 @@ module MultiAggregator
     end
 
     def generate_uid
-      "t#{Time.now.to_i}"
+      "t#{Time.now.to_i}_#{SecureRandom.hex(3)}"
     end
 
     def transfer_data(query_spec, storage, providers)
