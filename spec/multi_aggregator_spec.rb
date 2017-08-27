@@ -5,7 +5,7 @@ RSpec.describe MultiAggregator do
     expect(MultiAggregator::VERSION).not_to be nil
   end
 
-  context 'example from readme' do
+  shared_examples 'successful execution of the example' do
     let(:expected_result) do
       [
         { 'id' => '1', 'name' => 'Tom', 'type' => 'cat' },
@@ -39,5 +39,18 @@ RSpec.describe MultiAggregator do
 
       expect(MultiAggregator::Processor.new.call(query, storage, providers)).to eq(expected_result)
     end
+  end
+
+  context 'sync execution' do
+    before { MultiAggregator::Config.enable_threads = false }
+
+    it_behaves_like 'successful execution of the example'
+  end
+
+  context 'async execution' do
+    before { MultiAggregator::Config.enable_threads = true }
+    after { MultiAggregator::Config.enable_threads = false }
+
+    it_behaves_like 'successful execution of the example'
   end
 end

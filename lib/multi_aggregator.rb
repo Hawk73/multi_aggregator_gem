@@ -25,4 +25,9 @@ require 'multi_aggregator/query/validator'
 
 module MultiAggregator
   # TODO: add ability to set global logger and remove logger from dependency
+  class Config
+    class << self
+      attr_accessor :enable_threads
+    end
+  end
 end
